@@ -7,4 +7,4 @@ for i in 1 : Base.div(n, w)
     end
 end
 
-print("Error |f-f1|/|f| =", vecnorm(f - f1)/vecnorm(f))
+print("Error |f-f1|/|f| =", norm(f - f1)/norm(f))

@@ -2,6 +2,7 @@ using PyPlot
 using Images
 using NtToolBox:rescale
 using NtToolBox:Mdot
+using LinearAlgebra
 
 ##
 
@@ -17,7 +18,7 @@ function load_image(name, n = -1, flatten = 1, resc = 1, grayscale = 1)
 
   if grayscale == 1
     if (flatten == 1) & (ndims(f) > 2)
-      f = sum(f, 3)   # We must be careful, this returns an array of dimension 512*512*1 while
+      f = sum(f, dims=3)   # We must be careful, this returns an array of dimension 512*512*1 while
       f = f[:, :]     # in the python file np.sum(f, axis=2) returns an array of dimension 512*512
 
     end
@@ -254,10 +255,10 @@ function plot_wavelet(fW, Jmin = 0)
         Copyright (c) 2014 Gabriel Peyre
     """
     function rescaleWav(A)
-        v = maximum(abs(A[:]))
+        v = maximum(abs.(A[:]))
         B = copy(A)
         if v > 0
-            B = .5 + .5 .* A ./ v
+            B = .5 .+ .5 .* A ./ v
         end
         return B
     end
@@ -363,7 +364,7 @@ function perform_wavortho_transf(f0,Jmin,dir,h)
 	        sel = 1:2^(j+1);
 	        a = subselect(f,sel);
 	        for d=1:ndims(f)
-	            a = cat(d, subsampling(cconvol(a,h,d),d), subsampling(cconvol(a,g,d),d) );
+	            a = cat(dims=d, subsampling(cconvol(a,h,d),d), subsampling(cconvol(a,g,d),d) );
 	        end
 	        f = subassign(f,sel,a);
 	    end
