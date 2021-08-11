@@ -1,4 +1,4 @@
-d = sum(P.^2, 2)[:]
+d = sum(P.^2, dims=2)[:]
 rho = .1
 v = sort(d)
 I = reverse(sortperm(d))
@@ -11,7 +11,7 @@ P1 = P[I,:]
 nrow = size(P1)[1]
 Theta = zeros(nrow)
 for i in 1:nrow
-    Theta[i] = mod(atan2(P1[i,2],P1[i,1]),pi)
+    Theta[i] = mod(atan(P1[i,2],P1[i,1]),pi) #atan2 is now atan with 2 args
 end
 
 nbins = 200

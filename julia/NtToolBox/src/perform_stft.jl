@@ -1,3 +1,4 @@
+using FFTW
 function perform_stft(x,w,q,n)
     """
         perform_stft - compute a local Fourier transform
@@ -46,14 +47,14 @@ function perform_stft(x,w,q,n)
 
     X1 = repeat(X,outer=(1,w)) + repeat(dX, outer=(1,p))'
     #periodic boundary conditions
-    X1 = ((X1-1).%n)+1;
+    X1 = ((X1 .- 1) .% n) .+ 1;
 
     I = X1'
-    I[I.<=0]+=n
+    I[I.<=0] .+= n
 
 
     # build a sin weight function
-    W = .5 *(1 - cos(2*pi*Array(0:(w-1))./(w-1)))
+    W = .5 .* (1 .- cos.(2*pi*Array(0:(w-1))./(w-1)))
 
     #renormalize the windows
     weight = zeros(n)
@@ -62,7 +63,7 @@ function perform_stft(x,w,q,n)
         weight[I[:,i]] = weight[I[:,i]] + W.^2
     end
 
-    weight = sqrt(weight)
+    weight = sqrt.(weight)
     Weight = repeat(W, outer=(1,p))
 
     for i in 1:p
@@ -79,8 +80,8 @@ function perform_stft(x,w,q,n)
         else
             m = Base.div((eta*w),2)+1
             w1 = Base.div(w,2)
-            sel = Array(m-w1:m+w1-1) - 1
-        sel[sel.<=0] += eta*w
+            sel = Array(m-w1:m+w1-1) .- 1
+        sel[sel.<=0] .+= eta*w
         y[sel,:] = x[I].*Weight
 
         #perform the transform

@@ -117,8 +117,13 @@ function compute_max(X,d)
        Copyright (c) 2008 Gabriel Peyre
     """
     if ndims(X)>=2
-        Y = maximum(X,d)
-        I = mapslices(indmax,X,d)[:]
+        #Y = maximum(X,dims=d)
+        #I = findall(X[:,d] .== Y)
+
+        Y,I = findmax(X,dims=1)
+        I = getindex.(I,[1,2])[1,:]
+
+        #I = mapslices.(indmax,X,d)[:]
     elseif ndims(X)==1
         Y = maximum(X)
         I = indmaw(X)
