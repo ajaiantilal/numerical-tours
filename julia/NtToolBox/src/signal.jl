@@ -1,7 +1,7 @@
 using PyPlot
 using Images
-using NtToolBox.rescale
-using NtToolBox.Mdot
+using NtToolBox:rescale
+using NtToolBox:Mdot
 
 ##
 

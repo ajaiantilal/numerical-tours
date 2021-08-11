@@ -32,7 +32,7 @@ function perform_blurring(M, sigma, bound="sym")
         A = 1 #1D
     end
 
-    h = compute_gaussian_filter(p.*A, sigma./(4.*n), n*A)
+    h = compute_gaussian_filter(p.*A, sigma./(4 .* n), n*A)
     M = perform_convolution(M, h, bound)
 
     return M
