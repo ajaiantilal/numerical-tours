@@ -1,4 +1,4 @@
-e_bound = - sum(h.*log2([max(e,1e-20) for e in h]))
+e_bound = - sum(h.*log2.([max(e,1e-20) for e in h]))
 println("Entropy bound = $e_bound")
 println("---")
 Err = []
@@ -13,8 +13,8 @@ for k in 1:10
     #new vector
     x1 = zeros(n1)
     x1[1:length(x)] = x
-    x1[length(x)+1:end] = 1
-    x1 = x1 - 1
+    x1[length(x)+1:end] .= 1
+    x1 = x1 .- 1
     x2 = []
 
     mult = [m_token^i for i in 0:k-1]

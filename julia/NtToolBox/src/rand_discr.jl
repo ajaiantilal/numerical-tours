@@ -21,8 +21,8 @@ function rand_discr(p; m = 1)
     sample = zeros(m)
 
     for j in 1:n
-        ind = find((coin .> cumprob[j]) & (coin .<= cumprob[j+1]))
-        sample[ind] = j
+        ind = findall((coin .> cumprob[j]) .& (coin .<= cumprob[j+1]))
+        sample[ind] .= j
     end
     return sample
 end
