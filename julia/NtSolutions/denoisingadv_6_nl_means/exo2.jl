@@ -1,12 +1,13 @@
 figure(figsize = (10, 10))
 
+test = copy(f)
 tau = .03
 q_list = [10, 20]
 w_list = [3, 6]
 ind_plot = 0
 for i_q in 1 : length(q_list)
     for i_w in 1 : length(w_list)
-
+        global ind_plot
         w = w_list[i_w]
         q = q_list[i_q]
         ind_plot += 1
@@ -34,15 +35,16 @@ for i_q in 1 : length(q_list)
             return f'[I]
         end
 
+        #print("Haven't figured what test below is")
         P = patch(test)
 
         #PCA
         resh = P -> transpose((reshape(P, (n*n,w1*w1))))
-        remove_mean = Q -> Q - repeat(mean(Q, 1), inner = (w1*w1, 1))
+        remove_mean = Q -> Q - repeat(mean(Q, dims=1), inner = (w1*w1, 1))
 
         P1 = remove_mean(resh(P))
         C = P1*transpose(P1)
-        (D, V) = eig(C)
+        (D, V) = eigen(C)
         D = D[end : -1 : 1]
         V = V[:, end : -1 : 1]
 
@@ -57,12 +59,12 @@ for i_q in 1 : length(q_list)
         function distance_0(i,sel)
             H1 = (H[sel[1, :], :, :])
             H2 = (H1[:, sel[2, :], :])
-            return sum((H2 - repeat(reshape(H[i[1], i[2], :], (1, 1, length(H[i[1], i[2], :]))), inner = [length(sel[1, :]), length(sel[1, :]), 1])).^2, 3)/w1*w1
+            return sum((H2 - repeat(reshape(H[i[1], i[2], :], (1, 1, length(H[i[1], i[2], :]))), inner = [length(sel[1, :]), length(sel[1, :]), 1])).^2, dims=3)/w1*w1
         end
 
         distance = i -> distance_0(i, selection(i))
-        kernel = (i, tau) -> normalize(exp(-distance(i)./(2*tau^2)))
-        selection = i -> [clamP(i[1] - q : i[1] + q, 1, n)'; clamP(i[2] - q : i[2] + q, 1, n)']
+        kernel = (i, tau) -> normalize(exp.(-distance(i)./(2*tau^2)))
+        selection = i -> [clamP.(i[1] - q : i[1] + q, 1, n)'; clamP.(i[2] - q : i[2] + q, 1, n)']
 
         function NLval_0(K,sel)
         #     f_temp = f[sel[1, :], :]
@@ -74,6 +76,6 @@ for i_q in 1 : length(q_list)
         NLmeans = tau -> arrayfun((i1, i2) -> NLval([i1,i2], tau), X, Y)
         f1 = NLmeans(tau)
 
-        imageplot(clamP(f1), @sprintf("q = %i, w = %i, SNR = %.1f dB" , q, w, snr(f0,f1)), [2, 2, ind_plot])
+        imageplot(clamP.(f1), @sprintf("q = %i, w = %i, SNR = %.1f dB" , q, w, snr(f0,f1)), [2, 2, ind_plot])
     end
 end
