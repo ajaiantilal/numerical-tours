@@ -4,6 +4,7 @@ figure(figsize = (10, 7))
 
 f1 = f
 for i in 1 : 6
+    global f1
     f1 = medfilt(f1)
     imageplot(f1, @sprintf("Iteration %i", i), [2, 3, i])
 end
